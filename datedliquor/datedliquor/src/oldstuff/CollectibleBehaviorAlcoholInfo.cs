@@ -16,7 +16,7 @@ using Vintagestory.API.Datastructures;
 using Vintagestory.API.MathTools;
 using Vintagestory.API.Util;
 
-namespace datedliquor.src.Behaviors
+namespace datedliquor.src.oldshit
 {
     public class CollectibleBehaviorAlcoholInfo : CollectibleBehavior
     {
