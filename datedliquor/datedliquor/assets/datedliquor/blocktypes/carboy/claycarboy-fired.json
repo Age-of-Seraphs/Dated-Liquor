@@ -1,0 +1,107 @@
+{
+	"code": "carboy",
+	"class": "BlockBottle",
+	"variantgroups": [
+		{
+			"code": "material",
+			"states": [ "clay" ]
+		},
+		{
+			"code": "color",
+			"states": [ "blue", "fire", "black", "brown", "cream", "gray", "orange", "red", "tan" ]
+		},
+		{
+			"code": "type",
+			"states": [ "fired", "corked" ]
+		}
+	],
+	"shapeByType": {
+		"*-corked": { "base": "block/clay/carboy-corked" },
+		"*": { "base": "block/clay/carboy-opened" }
+	},
+	"textures": {
+		"orange": { "base": "game:block/clay/hardened/{color}" }
+	},
+	"behaviors": [
+		{ "name": "BoatableGenericTypedContainer" },
+		{ "name": "Lockable" },
+		{ "name": "Container" },
+		{ "name": "UnstableFalling" }
+	],
+	"attributes": {
+		"reinforcable": true,
+		"humanoidTraversalCost": 100,
+		"tempGlowMode": 1,
+		"partialAttachable": true,
+		"variantByGroup": "color",
+		"variantByGroupInventory": "color",
+		"openSound": "sounds/block/vesselopen",
+		"closeSound": "sounds/block/vesselclose",
+		"handbook": {
+			"groupBy": [ "carboy-clay-*-{type}" ]
+		},
+		"minFill": 0.21,
+		"maxFill": 3.81,
+		"minFillSideways": 6.7,
+		"maxFillSideways": 9.3
+	},
+	"attributesByType": {
+		"*-corked": {
+			"canDrinkFrom": false,
+			"isTopOpened": false,
+			"allowHeldLiquidTransfer": false,
+			"bottlerackable": true,
+			"perishRate": 0.1,
+			"liquidContainerProps": {
+				"capacityLitres": 12,
+				"transferSizeLitres": 0.1,
+				"emptyShapeLoc": "shapes/block/clay/carboy-corked",
+				"opaqueContentShapeLoc": "aculinaryartillery:shapes/block/bottle/contents",
+				"liquidContentShapeLoc": "aculinaryartillery:shapes/block/bottle/liquidcontents",
+				"liquidMaxYTranslate": 0.05
+			}
+		},
+		"*-fired": {
+			"canDrinkFrom": true,
+			"isTopOpened": true,
+			"allowHeldLiquidTransfer": true,
+			"bottlerackable": true,
+			"perishRate": 12,
+			"liquidContainerProps": {
+				"capacityLitres": 1,
+				"transferSizeLitres": 0.1,
+				"emptyShapeLoc": "shapes/block/clay/carboy-opened",
+				"opaqueContentShapeLoc": "aculinaryartillery:shapes/block/bottle/contents",
+				"liquidContentShapeLoc": "aculinaryartillery:shapes/block/bottle/contents",
+				"liquidMaxYTranslate": 0.05
+			}
+		}
+	},
+	"blockmaterial": "Ceramic",
+	"creativeinventory": {
+		"general": [ "*" ],
+		"datedliqour": [ "*" ]
+	},
+	"lightAbsorption": 0,
+	"sideopaque": { "all": false },
+	"sideao": { "all": false },
+	"sidesolid": { "all": false },
+	"collisionSelectionBox": {
+		"x1": 0.125,
+		"y1": 0,
+		"z1": 0.125,
+		"x2": 0.875,
+		"y2": 1,
+		"z2": 0.875
+	},
+	"replaceable": 1000,
+	"resistance": 0.8,
+	"maxStackSize": 4,
+	"sounds": {
+		"walk": "game:walk/stone",
+		"break": "game:block/ceramicplace",
+		"hit": "game:block/ceramichit",
+		"place": "game:block/ceramicplace"
+	},
+	"heldTpIdleAnimation": "holdunderarm"
+}
