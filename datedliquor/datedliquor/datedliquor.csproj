@@ -36,6 +36,10 @@
       <HintPath>$(VINTAGE_STORY)/Lib/cairo-sharp.dll</HintPath>
       <Private>False</Private>
     </Reference>
+	<Reference Include="ACulinaryArtillery">
+		<HintPath>$(Project)/external/ACulinaryArtillery.dll</HintPath>
+		<Private>False</Private>
+	</Reference>
   </ItemGroup>
 
 <ItemGroup>
@@ -51,7 +55,8 @@
 </ItemGroup>
 
 <ItemGroup>
-  <Folder Include="assets\patches\spirits\" />
+  <Folder Include="assets\datedliquor\compatibility\" />
+  <Folder Include="external\" />
 </ItemGroup>
 
 </Project>

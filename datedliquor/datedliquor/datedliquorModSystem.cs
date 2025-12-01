@@ -1,9 +1,10 @@
-﻿using datedliquor.src.Behaviors;
-using datedliquor.src.Harmony;
+﻿using datedliquor.src.BlockClass;
+using datedliquor.src.oldshit;
 using HarmonyLib;
 using System.Reflection;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
+using Vintagestory.API.Server;
 
 namespace datedliquor
 {
@@ -13,23 +14,26 @@ namespace datedliquor
         public override void Start(ICoreAPI api)
         {
             var modid = Mod.Info.ModID;
+            api.RegisterBlockClass(modid + ":TallRackBottle", typeof(BlockTallRackBottle));
             harmonyInstance = new Harmony(modid);
-
-            api.RegisterCollectibleBehaviorClass(modid+":AlcoholInfo", typeof(CollectibleBehaviorAlcoholInfo));
-
-            //harmonyInstance.Patch(typeof(Vintagestory.GameContent.BlockEntityCondenser).GetMethod("TryPut", BindingFlags.NonPublic | BindingFlags.Instance),
-              // postfix: new HarmonyMethod(typeof(harmPatches).GetMethod("Postfix_BlockEntityAnvil_TryPut")));
-
-            harmonyInstance.Patch(typeof(Vintagestory.GameContent.BlockEntityCondenser).GetMethod("TryTake", BindingFlags
-                .NonPublic | BindingFlags.Instance),
-                prefix: new HarmonyMethod(typeof(harmPatches).GetMethod("Prefix_BlockEntityAnvil_TryTake")));
+            //harmonyInstance.PatchAll();
         }
         public override void StartClientSide(ICoreClientAPI api)
         {
-            harmonyInstance = new Harmony(Mod.Info.ModID);
-            harmonyInstance.Patch(typeof(CollectibleObject).GetMethod("GetHeldItemInfo"),
-                postfix: new HarmonyMethod(typeof(harmPatches).GetMethod("Postfix_GetHeldItemInfo")));
 
+        }
+        public override void StartServerSide(ICoreServerAPI api)
+        {
+
+        }
+        public override void AssetsFinalize(ICoreAPI api)
+        {
+
+        }
+        public override void Dispose()
+        {
+            base.Dispose();
+            harmonyInstance.UnpatchAll(Mod.Info.ModID);
         }
     }
 }
