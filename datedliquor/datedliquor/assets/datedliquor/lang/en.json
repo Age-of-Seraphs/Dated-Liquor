@@ -1,3 +1,114 @@
 {
-    "hello": "hello world!"
+  "hello": "hello world!",
+
+
+
+  //Corked jug Names
+  "game:block-jug-black-corked": "Black ceramic jug",
+  "game:block-jug-blue-corked": "Dark brown ceramic jug",
+  "game:block-jug-brown-corked": "Brown ceramic jug",
+  "game:block-jug-cream-corked": "Cream ceramic jug",
+  "game:block-jug-fire-corked": "Fireclay ceramic jug",
+  "game:block-jug-gray-corked": "Gray ceramic jug",
+  "game:block-jug-orange-corked": "Orange ceramic jug",
+  "game:block-jug-red-corked": "Red ceramic jug",
+  "game:block-jug-tan-corked": "Tan ceramic jug",
+
+
+  //Wine Bottles
+  "block-winebottle-clay-blue-*": "Dark brown ceramic wine bottle",
+  "block-winebottle-clay-black-*": "Black ceramic wine bottle",
+  "block-winebottle-clay-brown-*": "Brown ceramic wine bottle",
+  "block-winebottle-clay-cream-*": "Cream ceramic wine bottle",
+  "block-winebottle-clay-fire-*": "Fireclay ceramic wine bottle",
+  "block-winebottle-clay-gray-*": "Gray ceramic wine bottle",
+  "block-winebottle-clay-orange-*": "Orange ceramic wine bottle",
+  "block-winebottle-clay-red-*": "Red ceramic wine bottle",
+  "block-winebottle-clay-tan-*": "Tan ceramic wine bottle",
+  "block-winebottle-clay-blue-raw": "Raw blue clay wine bottle",
+  "block-winebottle-clay-red-raw": "Raw red clay wine bottle",
+  "block-winebottle-clay-fire-raw": "Raw fire clay wine bottle",
+  "block-winebottle-glass-green-*": "Green glass wine bottle",
+  "block-winebottle-glass-blue-*": "Blue glass wine bottle",
+  "block-winebottle-glass-brown-*": "Brown glass wine bottle",
+  "block-winebottle-glass-pink-*": "Pink glass wine bottle",
+  "block-winebottle-glass-plain-*": "Clear glass wine bottle",
+  "block-winebottle-glass-quartz-*": "Quartz glass wine bottle",
+  "block-winebottle-glass-red-*": "Red glass wine bottle",
+  "block-winebottle-glass-smoky-*": "Smoky glass wine bottle",
+  "block-winebottle-glass-vintage-*": "Vintage glass wine bottle",
+  "block-winebottle-glass-violet-*": "Violet glass wine bottle",
+  "block-winebottle-glass-yellow-*": "Yellow glass wine bottle",
+
+  "blockdesc-winebottle-*-raw": "Could probably use some heat.",
+  "blockdesc-winebottle-*-fired": "Wine and fine dining awaits.",
+
+
+  //Growlers
+  "block-growler-clay-blue-*": "Dark brown ceramic growler",
+  "block-growler-clay-black-*": "Black ceramic growler",
+  "block-growler-clay-brown-*": "Brown ceramic growler",
+  "block-growler-clay-cream-*": "Cream ceramic growler",
+  "block-growler-clay-fire-*": "Fireclay ceramic growler",
+  "block-growler-clay-gray-*": "Gray ceramic growler",
+  "block-growler-clay-orange-*": "Orange ceramic growler",
+  "block-growler-clay-red-*": "Red ceramic growler",
+  "block-growler-clay-tan-*": "Tan ceramic growler",
+  "block-growler-clay-blue-raw": "Raw blue clay growler",
+  "block-growler-clay-red-raw": "Raw red clay growler",
+  "block-growler-clay-fire-raw": "Raw fire clay growler",
+  "block-growler-glass-green-*": "Green glass growler",
+  "block-growler-glass-blue-*": "Blue glass growler",
+  "block-growler-glass-brown-*": "Brown glass growler",
+  "block-growler-glass-pink-*": "Pink glass growler",
+  "block-growler-glass-plain-*": "Clear glass growler",
+  "block-growler-glass-quartz-*": "Quartz glass growler",
+  "block-growler-glass-red-*": "Red glass growler",
+  "block-growler-glass-smoky-*": "Smoky glass growler",
+  "block-growler-glass-vintage-*": "Vintage glass growler",
+  "block-growler-glass-violet-*": "Violet glass growler",
+  "block-growler-glass-yellow-*": "Yellow glass growler",
+
+  "blockdesc-growler-*-raw": "Could probably use some heat.",
+  "blockdesc-growler-*-fired": "The Perfect size for drinking with the boys",
+
+  //Carboys
+  "block-carboy-clay-blue-*": "Dark brown ceramic carboy",
+  "block-carboy-clay-black-*": "Black ceramic carboy",
+  "block-carboy-clay-brown-*": "Brown ceramic carboy",
+  "block-carboy-clay-cream-*": "Cream ceramic carboy",
+  "block-carboy-clay-fire-*": "Fireclay ceramic carboy",
+  "block-carboy-clay-gray-*": "Gray ceramic carboy",
+  "block-carboy-clay-orange-*": "Orange ceramic carboy",
+  "block-carboy-clay-red-*": "Red ceramic carboy",
+  "block-carboy-clay-tan-*": "Tan ceramic carboy",
+  "block-carboy-clay-blue-raw": "Raw blue clay carboy",
+  "block-carboy-clay-red-raw": "Raw red clay carboy",
+  "block-carboy-clay-fire-raw": "Raw fire clay carboy",
+  "block-carboy-glass-green-*": "Green glass carboy",
+  "block-carboy-glass-blue-*": "Blue glass carboy",
+  "block-carboy-glass-brown-*": "Brown glass carboy",
+  "block-carboy-glass-pink-*": "Pink glass carboy",
+  "block-carboy-glass-plain-*": "Clear glass carboy",
+  "block-carboy-glass-quartz-*": "Quartz glass carboy",
+  "block-carboy-glass-red-*": "Red glass carboy",
+  "block-carboy-glass-smoky-*": "Smoky glass carboy",
+  "block-carboy-glass-vintage-*": "Vintage glass carboy",
+  "block-carboy-glass-violet-*": "Violet glass carboy",
+  "block-carboy-glass-yellow-*": "Yellow glass carboy",
+
+  "blockdesc-carboy-*-raw": "Could probably use some heat.",
+  "blockdesc-carboy-*-fired": "for your serious alcohol storage.",
+
+
+
+
+
+
+
+  //Corked Descriptions
+  "game:blockdesc-jug-*-corked": "<font color=\"lightgreen\">Corked.</font>",
+  "blockdesc-winebottle-*-corked": "<font color=\"lightgreen\">Corked.</font>",
+  "blockdesc-growler-*-corked": "<font color=\"lightgreen\">Corked.</font>\nThe Perfect size for drinking with the boys",
+  "blockdesc-carboy-*-corked": "<font color=\"lightgreen\">Corked.</font>"
 }
