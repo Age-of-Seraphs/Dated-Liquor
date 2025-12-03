@@ -1,0 +1,11 @@
+Hello!
+
+so basically,
+
+the wine bottle is a larger version of your bottle, (2 Liters)
+the corked jug is to provide a version of the jug with a cork inside of it and inline with the rest of the containers (3 liters)
+the growler is a big boy jug and will only fit on the top of shelves and in ground storages. (6 - 12 liters)
+the carboy is your pre barrel liquid container, and is for large scale corked container recipes, as well as fitting on a single block. (30+ liters or so)
+
+the jug and crock overlays are in \assets\survival\textures\block\clay\overlay
+to get larger sized clay and glass containers looking right, we'll need to make overlays for them. 
