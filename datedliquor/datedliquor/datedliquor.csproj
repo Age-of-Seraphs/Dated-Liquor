@@ -55,7 +55,7 @@
 </ItemGroup>
 
 <ItemGroup>
-  <Folder Include="assets\datedliquor\compatibility\" />
+  <Folder Include="assets\datedliquor\shapes\item\" />
   <Folder Include="external\" />
 </ItemGroup>
 

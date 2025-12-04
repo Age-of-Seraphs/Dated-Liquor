@@ -1,10 +1,14 @@
 ﻿using datedliquor.src.BlockClass;
+using datedliquor.src.EntityClass;
+using datedliquor.src.ItemClass;
 using datedliquor.src.oldshit;
+using datedliquor.src.oldstuff;
 using HarmonyLib;
 using System.Reflection;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
 using Vintagestory.API.Server;
+using Vintagestory.GameContent;
 
 namespace datedliquor
 {
@@ -32,7 +36,16 @@ namespace datedliquor
         public override void Start(ICoreAPI api)
         {
             var modid = Mod.Info.ModID;
-            api.RegisterBlockClass(modid + ":CorkedContainer", typeof(BlockCorkedContainer));
+            api.RegisterBlockClass(modid + ".BlockLiquidContainerCorkable", typeof(BlockLiquidContainerCorkable));
+            api.RegisterBlockClass(modid + ".BlockDatedLiquorContainer", typeof(BlockDatedLiquorContainer));
+
+            api.RegisterBlockClass(modid + ".BlockLiquidContainerCorkable", typeof(BlockLiquidContainerCorkable));
+
+
+
+            api.RegisterBlockClass(modid + ".BlockThrowableBottle", typeof(BlockThrowableBottle));
+            api.RegisterEntity(modid + ".EntityThrownBottle", typeof(EntityThrownBottle));
+            api.RegisterItemClass(modid + ".ItemShards", typeof(ItemShards));
 
 
             harmonyInstance = new Harmony(modid);
