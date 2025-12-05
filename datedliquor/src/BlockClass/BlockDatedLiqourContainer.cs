@@ -21,32 +21,14 @@ namespace datedliquor.src.BlockClass
             base.OnLoaded(api);
             CorkedProps = Attributes?["liquidContainerProps"]?.AsObject(CorkedProps, Code.Domain) ?? CorkedProps;
         }
-
-
-
-        public override void OnCreatedByCrafting(ItemSlot[] allInputslots, ItemSlot outputSlot, GridRecipe byRecipe)
+        public override void AddExtraHeldItemInfoPostMaterial(ItemSlot inSlot, StringBuilder dsc, IWorldAccessor world)
         {
-            base.OnCreatedByCrafting(allInputslots, outputSlot, byRecipe);
-            if (this.Code.EndVariant() == "corked")
+            base.AddExtraHeldItemInfoPostMaterial(inSlot, dsc, world);
+            if (IsTopOpened)
             {
-
-                CorkedProps.LastCorkedHours = api.World.Calendar.ElapsedHours;
+                dsc.AppendLine("AddExtraHeldItemInfoPostMaterial Post Base Method");
             }
-            else 
-            {
-                api.Logger.Event("IsTOpOpened"+IsTopOpened);
-                if (IsTopOpened)
-                {
-                    
-                }
-            }
-        }
-        public override void OnConsumedByCrafting(ItemSlot[] allInputSlots, ItemSlot stackInSlot, GridRecipe gridRecipe, CraftingRecipeIngredient fromIngredient, IPlayer byPlayer, int quantity)
-        {
-            base.OnConsumedByCrafting(allInputSlots, stackInSlot, gridRecipe, fromIngredient, byPlayer, quantity);
-        }
-
-
-
+            
+        }        
     }
 }

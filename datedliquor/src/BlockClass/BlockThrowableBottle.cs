@@ -17,7 +17,7 @@ using static System.Net.Mime.MediaTypeNames;
 
 namespace datedliquor.src.BlockClass
 {
-    internal class BlockThrowableBottle : BlockLiquidContainerCorkable
+    internal class BlockThrowableBottle : BlockDatedLiquorContainer
     {
         private SkillItem[] toolModes;
 
