@@ -12,7 +12,7 @@ namespace datedliquor.src.System
     public class CorkedContainableProps
     {
         //Ubject to hold all extra nexxecary attributes
-        AssetLocation CorkAddSound = new AssetLocation();
+        AssetLocation CorkScrewSound = new AssetLocation();
 
         AssetLocation CorkPopSound = new AssetLocation();
         
