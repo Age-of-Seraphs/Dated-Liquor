@@ -9,14 +9,8 @@ using Vintagestory.API.MathTools;
 
 namespace datedliquor.src.System
 {
-    public class CorkedContainableProps
+    public class DatedContainableProps
     {
-        //Ubject to hold all extra nexxecary attributes
-        AssetLocation CorkScrewSound = new AssetLocation();
-
-        AssetLocation CorkPopSound = new AssetLocation();
-        
-
         public bool HasDate;
 
         public double FirstCorkedHours;
