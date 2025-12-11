@@ -302,7 +302,7 @@ namespace datedliquor.src.BlockClass
                 ItemSlot itemSlot = player.InventoryManager?.OffhandHotbarSlot;
                 if (itemSlot != null && (itemSlot.Empty || itemSlot.Itemstack.Collectible.FirstCodePart() == "cork"))
                 {
-                    uncorking = true;
+                    //uncorking = true;
                 }
                 else
                 {
@@ -316,7 +316,7 @@ namespace datedliquor.src.BlockClass
         public override bool OnHeldInteractStep(float secondsUsed, ItemSlot itemslot, EntityAgent byEntity, BlockSelection blockSel, EntitySelection entitySel)
         {
             IPlayer player = (byEntity as EntityPlayer)?.Player;
-            if (player != null && blockSel == null && entitySel == null && Variant["type"] == "corked" && uncorking && secondsUsed > 0.5)
+            if (player != null && blockSel == null && entitySel == null && Variant["type"] == "corked"  && secondsUsed > 0.5)
             {
                 ItemSlot itemSlot = player.InventoryManager?.OffhandHotbarSlot;
                 if (itemSlot != null && (itemSlot.Empty || itemSlot.Itemstack.Collectible.FirstCodePart() == "cork"))
@@ -357,7 +357,31 @@ namespace datedliquor.src.BlockClass
         public override void OnHeldInteractStop(float secondsUsed, ItemSlot slot, EntityAgent byEntity, BlockSelection blockSel, EntitySelection entitySel)
         {
             api.Logger.Event("OnHeldInteractStop");
+            
+            // Store content state before base call
+            ItemStack contentBefore = GetContent(slot.Itemstack);
+            float litresBefore = GetCurrentLitres(slot.Itemstack);
+            
             base.OnHeldInteractStop(secondsUsed, slot, byEntity, blockSel, entitySel);
+            
+            // Check if content changed after interaction (filling/emptying occurred)
+            ItemStack contentAfter = GetContent(slot.Itemstack);
+            float litresAfter = GetCurrentLitres(slot.Itemstack);
+            
+            IPlayer player = (byEntity as EntityPlayer)?.Player;
+            
+            // If bottle was empty and now has content, stamp it
+            if ((contentBefore == null || litresBefore <= 0f) && (contentAfter != null && litresAfter > 0f))
+            {
+                CheckAndStampIfFilled(slot.Itemstack, player);
+                slot.MarkDirty();
+            }
+            // If bottle is being emptied, clear bottling info
+            else if ((contentBefore != null && litresBefore > 0f) && (contentAfter == null || litresAfter <= 0f))
+            {
+                ClearBottlingInfo(slot.Itemstack);
+                slot.MarkDirty();
+            }
         }
 
         public override void OnCreatedByCrafting(ItemSlot[] allInputslots, ItemSlot outputSlot, GridRecipe byRecipe)
@@ -512,6 +536,7 @@ namespace datedliquor.src.BlockClass
                 if (GetCurrentLitres(slot.Itemstack) == 0f)
                 {
                     SetContent(slot.Itemstack, null);
+                    ClearBottlingInfo(slot.Itemstack);
                 }
             }
         }
@@ -577,6 +602,52 @@ namespace datedliquor.src.BlockClass
         {
             base.GetHeldItemInfo(inSlot, dsc, world, withDebugInfo);
             ItemStack content = GetContent(inSlot.Itemstack);
+            
+            // Display bottling information if available
+            var attrs = inSlot.Itemstack?.Attributes;
+            if (attrs != null)
+            {
+                string bottledBy = attrs.GetString("bottledBy");
+                double? bottledOnDays = attrs.GetDouble("bottledOnTotalDays");
+                
+                if (!string.IsNullOrEmpty(bottledBy) && bottledOnDays.HasValue)
+                {
+                    dsc.AppendLine();
+                    
+                    double currentDays = 0;
+                    if (world is IServerWorldAccessor serverWorld)
+                    {
+                        currentDays = serverWorld.Calendar.TotalDays;
+                    }
+                    else if (world is IClientWorldAccessor clientWorld)
+                    {
+                        currentDays = clientWorld.Calendar.TotalDays;
+                    }
+                    
+                    double daysAged = currentDays - bottledOnDays.Value;
+                    int yearsAged = (int)(daysAged / world.Calendar.DaysPerYear);
+                    int monthsAged = (int)((daysAged % world.Calendar.DaysPerYear) / world.Calendar.DaysPerMonth);
+                    int daysAgedRemainder = (int)(daysAged % world.Calendar.DaysPerMonth);
+                    
+                    string dateInfo = "";
+                    if (yearsAged > 0)
+                    {
+                        dateInfo = Lang.Get("datedliquor:bottled-info-years", yearsAged, monthsAged);
+                    }
+                    else if (monthsAged > 0)
+                    {
+                        dateInfo = Lang.Get("datedliquor:bottled-info-months", monthsAged, daysAgedRemainder);
+                    }
+                    else
+                    {
+                        dateInfo = Lang.Get("datedliquor:bottled-info-days", daysAgedRemainder);
+                    }
+                    
+                    dsc.AppendLine(Lang.Get("datedliquor:bottled-by", bottledBy));
+                    dsc.AppendLine(dateInfo);
+                }
+            }
+            
             if (content == null)
             {
                 return;
@@ -673,5 +744,71 @@ namespace datedliquor.src.BlockClass
         }
 
         #endregion information
+
+        // Add this helper somewhere near the other protected helpers
+        protected void StampFilled(ItemStack containerStack, IPlayer byPlayer = null)
+        {
+            if (containerStack == null) return;
+            var attrs = containerStack.Attributes;
+            if (attrs == null) return;
+
+            // Store bottler name if player is provided
+            if (byPlayer != null)
+            {
+                attrs.SetString("bottledBy", byPlayer.PlayerName);
+            }
+            
+            // Store game world time (in total days) when bottled
+            // This uses the world's calendar time, which is more meaningful for gameplay
+            if (api.World is IServerWorldAccessor serverWorld)
+            {
+                attrs.SetDouble("bottledOnTotalDays", serverWorld.Calendar.TotalDays);
+            }
+            else if (api.World is IClientWorldAccessor clientWorld)
+            {
+                attrs.SetDouble("bottledOnTotalDays", clientWorld.Calendar.TotalDays);
+            }
+            
+            // Also store UTC timestamp as backup
+            attrs.SetLong("filledUtcTicks", DateTime.UtcNow.Ticks);
+        }
+
+        protected void ClearBottlingInfo(ItemStack containerStack)
+        {
+            if (containerStack == null) return;
+            var attrs = containerStack.Attributes;
+            if (attrs == null) return;
+
+            attrs.RemoveAttribute("bottledBy");
+            attrs.RemoveAttribute("bottledOnTotalDays");
+            attrs.RemoveAttribute("filledUtcTicks");
+        }
+
+        /// <summary>
+        /// Checks if a bottle was just filled (transitioned from empty to having content)
+        /// and stamps it with bottling information
+        /// </summary>
+        protected void CheckAndStampIfFilled(ItemStack containerStack, IPlayer byPlayer = null)
+        {
+            if (containerStack == null) return;
+            
+            ItemStack currentContent = GetContent(containerStack);
+            float currentLitres = GetCurrentLitres(containerStack);
+            
+            // Check if bottle was previously empty (no bottling info) and now has content
+            var attrs = containerStack.Attributes;
+            bool wasEmpty = attrs?.GetString("bottledBy") == null && currentLitres > 0f;
+            
+            // If bottle is being filled for the first time (has content but no bottling info)
+            if (currentContent != null && currentLitres > 0f && wasEmpty)
+            {
+                StampFilled(containerStack, byPlayer);
+            }
+            // If bottle is being emptied, clear bottling info
+            else if (currentContent == null || currentLitres <= 0f)
+            {
+                ClearBottlingInfo(containerStack);
+            }
+        }
     }
 }

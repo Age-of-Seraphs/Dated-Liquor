@@ -110,5 +110,11 @@
   "game:blockdesc-jug-*-corked": "<font color=\"lightgreen\">Corked.</font>",
   "blockdesc-winebottle-*-corked": "<font color=\"lightgreen\">Corked.</font>",
   "blockdesc-growler-*-corked": "<font color=\"lightgreen\">Corked.</font>\nThe Perfect size for drinking with the boys",
-  "blockdesc-carboy-*-corked": "<font color=\"lightgreen\">Corked.</font>"
+  "blockdesc-carboy-*-corked": "<font color=\"lightgreen\">Corked.</font>",
+
+  //Bottling Information
+  "datedliquor:bottled-by": "Bottled by: {0}",
+  "datedliquor:bottled-info-years": "Aged {0} years, {1} months",
+  "datedliquor:bottled-info-months": "Aged {0} months, {1} days",
+  "datedliquor:bottled-info-days": "Aged {0} days"
 }
