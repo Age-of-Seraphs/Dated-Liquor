@@ -11,9 +11,9 @@ using static HarmonyLib.Code;
 
 namespace datedliquor.src.BlockClass
 {
-    internal class BlockDatedLiquorContainer : BlockBottle
+    internal class BlockDatedLiquorContainer : BlockCorkableLiquidContainer
     {
-        public CorkedContainableProps CorkedProps = new CorkedContainableProps();
+        public DatedContainableProps CorkedProps = new DatedContainableProps();
 /*
  TODO 
 
@@ -31,11 +31,7 @@ recorking a partially emptied bottle does not update the date on the container, 
 add the ability to cork/uncork a bottle while it's placed in the world
 */
 
-        public override void OnLoaded(ICoreAPI api)
-        {
-            base.OnLoaded(api);
-            CorkedProps = Attributes?["liquidContainerProps"]?.AsObject(CorkedProps, Code.Domain) ?? CorkedProps;
-        }
+       
         public override void AddExtraHeldItemInfoPostMaterial(ItemSlot inSlot, StringBuilder dsc, IWorldAccessor world)
         {
             base.AddExtraHeldItemInfoPostMaterial(inSlot, dsc, world);

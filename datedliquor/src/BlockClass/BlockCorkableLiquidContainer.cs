@@ -17,32 +17,34 @@ using Vintagestory.GameContent;
 
 namespace datedliquor.src.BlockClass
 {
-    public class BlockCorkableLiquidContainer : BlockLiquidContainerTopOpened, IContainedInteractable
+    public class BlockCorkableLiquidContainer : BlockLiquidContainerTopOpened //, IContainedInteractable
     {
         /*
          * 
+         * Add an attribute to corked containers for the date that they were corked/sealed.
          * 
-         * THIS CLASS IS BASED SOMEWHAT OFF OF BlockBOttle from ACA
+         * Read that date and compare to the current date, display it in a format defined in the cfg file.        
+         * 
+         * recorking a partially emptied bottle does not update the date on the container, and the older date is used until emptied or one of the above contitions occur.
+         * 
+         * when a bottle is uncorked/uncapped, the date remains displayed on the bottle.
+         * 
+         * If more liquid is added to the bottle, or the bottle is emptied, then the bottle loses the date attribute. 
+         *        
+         * add the ability to cork/uncork a bottle while it's placed in the world
+         * 
+        */
 
-         TODO
+        private LiquidTopOpenContainerProps props = new();
+        protected virtual string MeshRefsCacheKey => Code.ToShortString() + "meshRefs";
+        protected virtual AssetLocation EmptyShapeLoc => props.EmptyShapeLoc ?? Shape.Base;
+        protected virtual AssetLocation ContentShapeLoc => props.OpaqueContentShapeLoc;
+        protected virtual AssetLocation LiquidContentShapeLoc => props.LiquidContentShapeLoc;
 
-        Add an attribute to corked containers for the date that they were corked/sealed.
+        protected AssetLocation CorkedShapeLoc => AssetLocation.Create(Attributes["corkedShapeLoc"].AsString(), Code.Domain);
 
-        Read that date and compare to the current date, display it in a format defined in the cfg file.
-
-        when a bottle is uncorked/uncapped, the date remains displayed on the bottle.
-
-        If more liquid is added to the bottle, or the bottle is emptied, then the bottle loses the date attribute.
-
-        recorking a partially emptied bottle does not update the date on the container, and the older date is used until emptied or one of the above contitions occur.
-         
-
-        add the ability to cork/uncork a bottle while it's placed in the world
-         */
-
-
-        private LiquidTopOpenContainerProps props = new LiquidTopOpenContainerProps();
-
+        public override float TransferSizeLitres => props.TransferSizeLitres;
+        public override float CapacityLitres => props.CapacityLitres;
         //Allow previously preset properties from BlockLiquidContainerTopOpened to be set from JSON attributes
         public override bool CanDrinkFrom => Attributes["canDrinkFrom"].AsBool(defaultValue: true);
         public override bool IsTopOpened => Attributes["isTopOpened"].AsBool(defaultValue: true);
@@ -53,20 +55,21 @@ namespace datedliquor.src.BlockClass
         public virtual float MinFillY => Attributes["minFill"].AsFloat();
 
         public virtual float MaxFillY => Attributes["maxFill"].AsFloat();
-        
+
 
         //These are inherited from BlockLiquidContainerTopOPened, and are new and could possibly used instead of Min and max fill Y
 
         //liquidMaxYTranslate => Props.LiquidMaxYTranslate;
-        
+
         //liquidYTranslatePerLitre => liquidMaxYTranslate / CapacityLitres;
-        
+
         public virtual float MinFillZ => Attributes["minFillSideways"].AsFloat();
 
         public virtual float MaxFillZ => Attributes["maxFillSideways"].AsFloat();
 
         public float SatMult => Attributes?["satMult"].AsFloat(1f) ?? 1f;
 
+        ItemStack corkStack;
         public override void OnLoaded(ICoreAPI api)
         {
             base.OnLoaded(api);
@@ -186,6 +189,13 @@ namespace datedliquor.src.BlockClass
         public MeshData? GenMesh(ICoreClientAPI? capi, ItemStack? contentStack, bool isSideways = false, BlockPos? forBlockPos = null)
         {
             IAsset asset = capi?.Assets.TryGet(emptyShapeLoc.CopyWithPathPrefixAndAppendixOnce("shapes/", ".json"));
+
+            if (corkStack != null)
+            {
+                asset = capi?.Assets.TryGet(CorkedShapeLoc.CopyWithPathPrefixAndAppendixOnce("shapes/", ".json"));
+            }
+
+
             if (asset == null)
             {
                 return new MeshData();
@@ -206,7 +216,7 @@ namespace datedliquor.src.BlockClass
 
                     shape = SliceFlattenedShape(shape.FlattenElementHierarchy(), fullness, isSideways);
                     MeshData sourceMesh = modeldata;
-                    capi.Tesselator.TesselateShape("bottle", shape, out modeldata, new BottleTextureSource(capi, contentStack, containableProps.Texture, this), new Vec3f(Shape.rotateX, Shape.rotateY, Shape.rotateZ), 0, 0, 0);
+                    capi.Tesselator.TesselateShape("BlockCorkableLiquidContainer", shape, out modeldata, new BottleTextureSource(capi, contentStack, containableProps.Texture, this), new Vec3f(Shape.rotateX, Shape.rotateY, Shape.rotateZ), 0, 0, 0);
                     for (int i = 0; i < modeldata.Flags.Length; i++)
                     {
                         modeldata.Flags[i] = modeldata.Flags[i] & -4097;
@@ -257,7 +267,6 @@ namespace datedliquor.src.BlockClass
         #region interaction
         //I was attempting to add OnContained Interacts to allow for corking/uncorking bottles inside of ground storages, and I might be back to reimplement it.
 
-
         public virtual bool OnContainedInteractStart(BlockEntityContainer be, ItemSlot slot, IPlayer byPlayer, BlockSelection blockSel)
         {
             ItemSlot activeHotbarSlot = byPlayer.InventoryManager.ActiveHotbarSlot;
@@ -270,7 +279,7 @@ namespace datedliquor.src.BlockClass
             if (attributes != null && attributes.Exists)
             {
                 bool flag = false;
-                
+
 
                 slot.MarkDirty();
                 be.MarkDirty(redrawOnClient: true);
@@ -281,42 +290,40 @@ namespace datedliquor.src.BlockClass
 
                 return true;
             }
-
+            
             return false;
         }
-        public bool OnContainedInteractStep(float secondsUsed, BlockEntityContainer be, ItemSlot slot, IPlayer byPlayer, BlockSelection blockSel)
+        public virtual bool OnContainedInteractStep(float secondsUsed, BlockEntityContainer be, ItemSlot slot, IPlayer byPlayer, BlockSelection blockSel)
         {
             return false;
         }
-        public void OnContainedInteractStop(float secondsUsed, BlockEntityContainer be, ItemSlot slot, IPlayer byPlayer, BlockSelection blockSel)
+        public virtual void OnContainedInteractStop(float secondsUsed, BlockEntityContainer be, ItemSlot slot, IPlayer byPlayer, BlockSelection blockSel)
         {
 
         }
-
 
         public override void OnHeldInteractStart(ItemSlot itemslot, EntityAgent byEntity, BlockSelection blockSel, EntitySelection entitySel, bool firstEvent, ref EnumHandHandling handHandling)
         {
             IPlayer player = (byEntity as EntityPlayer)?.Player;
-            if (player != null && blockSel == null && entitySel == null && Variant["type"] == "corked")
+            if (player != null && blockSel == null && entitySel == null && IsTopOpened == false)
             {
                 ItemSlot itemSlot = player.InventoryManager?.OffhandHotbarSlot;
                 if (itemSlot != null && (itemSlot.Empty || itemSlot.Itemstack.Collectible.FirstCodePart() == "cork"))
                 {
-                    //uncorking = true;
+
                 }
                 else
                 {
                     (api as ICoreClientAPI)?.TriggerIngameError(this, "fulloffhandslot", Lang.Get("aculinaryartillery:bottle-fulloffhandslot"));
                 }
             }
-
             base.OnHeldInteractStart(itemslot, byEntity, blockSel, entitySel, firstEvent, ref handHandling);
         }
 
         public override bool OnHeldInteractStep(float secondsUsed, ItemSlot itemslot, EntityAgent byEntity, BlockSelection blockSel, EntitySelection entitySel)
         {
             IPlayer player = (byEntity as EntityPlayer)?.Player;
-            if (player != null && blockSel == null && entitySel == null && Variant["type"] == "corked" && secondsUsed > 0.5)
+            if (player != null && blockSel == null && entitySel == null && corkStack != null && secondsUsed > 0.5)
             {
                 ItemSlot itemSlot = player.InventoryManager?.OffhandHotbarSlot;
                 if (itemSlot != null && (itemSlot.Empty || itemSlot.Itemstack.Collectible.FirstCodePart() == "cork"))
@@ -327,10 +334,14 @@ namespace datedliquor.src.BlockClass
                     };
                     if (itemslot.StackSize == 1)
                     {
+                        corkStack = itemstack;
                         itemslot.Itemstack = itemstack;
+                        OnCorkContainer(itemslot, byEntity);
                     }
                     else
                     {
+                        corkStack = itemslot.Itemstack.GetEmptyClone();
+                        corkStack.StackSize = 1;
                         itemslot.TakeOut(1);
                         itemslot.MarkDirty();
                         if (!player.InventoryManager.TryGiveItemstack(itemstack, slotNotifyEffect: true))
@@ -360,31 +371,85 @@ namespace datedliquor.src.BlockClass
             base.OnHeldInteractStop(secondsUsed, slot, byEntity, blockSel, entitySel);
         }
 
+        public override bool MatchesForCrafting(ItemStack inputStack, GridRecipe gridRecipe, CraftingRecipeIngredient ingredient)
+        {
+            if ((gridRecipe.Output.ResolvedItemstack?.Collectible is BlockCorkableLiquidContainer))
+            {
+                bool flag = false;
+                bool flag2 = false;
+                for (int i = 0; i < gridRecipe.resolvedIngredients.Length; i++)
+                {
+                    ItemStack resolvedItemstack = gridRecipe.resolvedIngredients[i].ResolvedItemstack;
+                    if (resolvedItemstack?.Collectible is BlockCorkableLiquidContainer)
+                    {
+                        flag2 = resolvedItemstack.Attributes.GetBool("isTopOpened");
+                    }
+                    else if (resolvedItemstack != null && resolvedItemstack.ItemAttributes["canSealBottle"].AsBool())
+                    {
+                        flag = true;
+                    }
+                }
+
+                if (flag)
+                {
+                    return !flag2;
+                }
+            }
+            return base.MatchesForCrafting(inputStack, gridRecipe, ingredient);
+        }
+
         public override void OnCreatedByCrafting(ItemSlot[] allInputslots, ItemSlot outputSlot, GridRecipe byRecipe)
         {
             base.OnCreatedByCrafting(allInputslots, outputSlot, byRecipe);
-            if (Variant["type"] == "corked")
+            if (outputSlot.Itemstack == null)
             {
-                api.Logger.Event("BlockLiquidContainerCorkable : OnCreatedByCrafting");
-                OnCorkContainer(outputSlot, null);
+                return;
             }
-            else if (Variant["type"] == "fired")
+            
+
+            foreach (ItemSlot itemSlot in allInputslots)
             {
-                api.Logger.Event("BlockLiquidContainerCorkable : OnCreatedByCrafting");
-                OnUncorkContainer(outputSlot, null);
+                if (itemSlot.Itemstack?.Collectible is BlockCorkableLiquidContainer)
+                {
+                    ItemStack bottleCorkStack = new ItemStack();
+                    bool flag = true;
+
+                    outputSlot.Itemstack.Attributes = itemSlot.Itemstack.Attributes.Clone();
+
+                    for (int i = 0; i < allInputslots.Length; i++)
+                    {
+                        ItemStack resolvedItemstack = allInputslots[i]?.Itemstack;
+                        if (resolvedItemstack != null && resolvedItemstack.ItemAttributes["canSealBottle"].AsBool())
+                        {
+                            bottleCorkStack = resolvedItemstack.GetEmptyClone();
+                            flag = false;
+                            break;
+                        }
+                    }
+                    outputSlot.Itemstack.Attributes.SetItemstack("corkStack", bottleCorkStack);
+                    outputSlot.Itemstack.Attributes.SetInt("renderVariant", flag ? 0 : 1);
+                    outputSlot.Itemstack.Attributes.SetBool("canDrinkFrom", value: flag);
+                    outputSlot.Itemstack.Attributes.SetBool("isTopOpened", value: flag);
+                    outputSlot.Itemstack.Attributes.SetBool("allowHeldLiquidTransfer", value: flag);
+                    OnCorkContainer(outputSlot, null);
+                    return;
+                }
             }
         }
+
         public override void TryMergeStacks(ItemStackMergeOperation op)
         {
+
             ItemSlot sourceSlot = op.SourceSlot;
 
-            if (Variant["type"] != "corked" && op.CurrentPriority == EnumMergePriority.DirectMerge)
+            if (IsTopOpened == false && op.CurrentPriority == EnumMergePriority.DirectMerge)
             {
                 Vintagestory.API.Datastructures.JsonObject itemAttributes = sourceSlot.Itemstack.ItemAttributes;
+
                 if (itemAttributes != null && itemAttributes["canSealBottle"]?.AsBool() == true)
                 {
                     ItemSlot sinkSlot = op.SinkSlot;
-                    ItemStack itemstack = new ItemStack(op.World.GetBlock(sinkSlot.Itemstack.Collectible.CodeWithVariant("type", "corked")))
+                    ItemStack itemstack = new ItemStack(op.World.GetBlock(sinkSlot.Itemstack.Collectible.Code))
                     {
                         Attributes = sinkSlot.Itemstack.Attributes
                     };
@@ -400,6 +465,15 @@ namespace datedliquor.src.BlockClass
                             op.World.SpawnItemEntity(itemstack, op.ActingPlayer.Entity.Pos.AsBlockPos);
                         }
                     }
+
+                    corkStack = sourceSlot.Itemstack.GetEmptyClone();
+                    corkStack.StackSize = 1;
+                    
+                    sinkSlot.Itemstack.Attributes.SetInt("renderVariant", 1);
+                    sinkSlot.Itemstack.Attributes.SetBool("canDrinkFrom", value: false);
+                    sinkSlot.Itemstack.Attributes.SetBool("isTopOpened", value: false);
+                    sinkSlot.Itemstack.Attributes.SetBool("allowHeldLiquidTransfer", value: false);
+
                     op.MovedQuantity = 1;
                     sourceSlot.TakeOut(1);
                     sinkSlot.MarkDirty();
@@ -415,7 +489,7 @@ namespace datedliquor.src.BlockClass
             if (priority == EnumMergePriority.DirectMerge)
             {
                 Vintagestory.API.Datastructures.JsonObject itemAttributes = sourceStack.ItemAttributes;
-                if (itemAttributes != null && itemAttributes["canSealBottle"]?.AsBool() == true && Variant["type"] != "corked")
+                if (itemAttributes != null && itemAttributes["canSealBottle"]?.AsBool() == true)
                 {
                     return 1;
                 }
@@ -423,16 +497,16 @@ namespace datedliquor.src.BlockClass
 
             return base.GetMergableQuantity(sinkStack, sourceStack, priority);
         }
-       
+
         //Need to write methods that handle the corking/uncorking of a bottle so we can override them in the dependent class. Will return false if unable to cork bottle
         //So far these do properly call whenever a bottle is corked/uncorked, however they get called thrice instead of once
         protected virtual void OnCorkContainer(ItemSlot containerSlot, EntityAgent byEntity)
         {
-            api.Logger.Event("container in slot {0} has been corked",containerSlot);
+            api.Logger.Event("container in slot {0} has been corked", containerSlot);
         }
         protected virtual void OnUncorkContainer(ItemSlot containerSlot, EntityAgent byEntity)
         {
-            api.Logger.Event("container in slot {0} has been uncorked",containerSlot);
+            api.Logger.Event("container in slot {0} has been uncorked", containerSlot);
         }
 
         #endregion interaction
