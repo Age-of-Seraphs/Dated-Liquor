@@ -675,3 +675,6 @@ fabric.properties
 # End of https://www.toptal.com/developers/gitignore/api/csharp,visualstudio,visualstudiocode,rider
 /datedliquor/datedliquor.csproj
 /CakeBuild/CakeBuild.csproj
+.vscode/launch.json
+CakeBuild/CakeBuild.csproj
+datedliquor/datedliquor.csproj

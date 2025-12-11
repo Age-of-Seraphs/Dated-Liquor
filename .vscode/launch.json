@@ -8,7 +8,7 @@
             "name": "Launch Client (Debug)",
             "type": "coreclr",
             "request": "launch",
-            "program": "${env:VINTAGE_STORY}/Vintagestory.exe",
+            "program": "E:/Vintagestory/VintageS/Vintagestory.exe",
             "linux": {
                 "program": "${env:VINTAGE_STORY}/Vintagestory"
             },
@@ -17,8 +17,8 @@
             },
             "preLaunchTask": "build",
             "args": [
-                // "--playStyle" , "preset-surviveandbuild",
-                // "--openWorld" , "modding test world",
+                "--playStyle" , "preset-surviveandbuild",
+                "--openWorld" , "modding test world",
                 "--tracelog",
                 "--addModPath",
                 "${workspaceFolder}/datedliquor/bin/Debug/Mods",
