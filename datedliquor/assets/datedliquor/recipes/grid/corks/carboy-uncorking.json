@@ -5,7 +5,10 @@
 			"G": {
 				"type": "block",
 				"code": "carboy-clay-*-fired",
-				"name": "color"
+				"name": "color",
+				"attributes": {
+					"corked": true
+				}
 			}
 		},
 		"width": 1,
@@ -22,7 +25,10 @@
 			"G": {
 				"type": "block",
 				"code": "carboy-glass-*-fired",
-				"name": "color"
+				"name": "color",
+				"attributes": {
+					"corked": true
+				}
 			}
 		},
 		"width": 1,

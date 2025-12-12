@@ -412,7 +412,6 @@ namespace datedliquor.src.BlockClass
         }
         public override void OnHeldInteractStop(float secondsUsed, ItemSlot slot, EntityAgent byEntity, BlockSelection blockSel, EntitySelection entitySel)
         {
-            api.Logger.Event("OnHeldInteractStop");
             base.OnHeldInteractStop(secondsUsed, slot, byEntity, blockSel, entitySel);
         }
 
@@ -428,23 +427,22 @@ namespace datedliquor.src.BlockClass
                     ItemStack resolvedItemstack = gridRecipe.resolvedIngredients[i].ResolvedItemstack;
                     if (resolvedItemstack?.Collectible is BlockCorkableLiquidContainer)
                     {
-                        // can never seem to return the corked attribute as true when the bottle is corked
-                        flag2 = resolvedItemstack.Attributes.GetAsBool("corked");
+                        flag2 = inputStack.Attributes.GetBool("corked");
                     }
                     
                 }
                 for (int i = 0; i < gridRecipe.resolvedIngredients.Length; i++)
                 {
                     ItemStack resolvedItemstack = gridRecipe.resolvedIngredients[i].ResolvedItemstack;
-                    if (resolvedItemstack != null && resolvedItemstack.ItemAttributes["canSealBottle"].AsBool() && !flag2)
+                    if (resolvedItemstack != null && resolvedItemstack.ItemAttributes["canSealBottle"].AsBool() == true)
                     {
                         flag = true;
                     }
                 }
 
-                if (flag)
+                if (flag2 && flag)
                 {
-                    return !flag2;
+                    return false;       
                 }
             }
             return base.MatchesForCrafting(inputStack, gridRecipe, ingredient);
@@ -483,6 +481,11 @@ namespace datedliquor.src.BlockClass
                     outputSlot.Itemstack.Attributes.SetBool("isTopOpened", value: flag);
                     outputSlot.Itemstack.Attributes.SetBool("allowHeldLiquidTransfer", value: flag);
                     OnCorkContainer(outputSlot, null);
+
+                    if (byRecipe.Ingredients.Count == 1)
+                    {
+                        
+                    }
                     return;
                 }
             }

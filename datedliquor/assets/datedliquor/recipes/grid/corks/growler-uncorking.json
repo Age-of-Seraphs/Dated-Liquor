@@ -7,7 +7,7 @@
 				"code": "growler-clay-*-fired",
 				"name": "color",
 				"attributes": {
-					"Corked": true
+					"corked": true
 				}
 			}
 		},
@@ -27,7 +27,7 @@
 				"code": "growler-glass-*-fired",
 				"name": "color",
 				"attributes": {
-					"Corked": true
+					"corked": true
 				}
 			}
 		},

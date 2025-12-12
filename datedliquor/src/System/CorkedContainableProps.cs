@@ -9,7 +9,7 @@ using Vintagestory.API.MathTools;
 
 namespace datedliquor.src.System
 {
-    public class DatedContainableProps
+    public class DatedLiqourProps
     {
         //Whether it has a date attached to the container
         public bool HasDate;

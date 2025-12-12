@@ -5,7 +5,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Vintagestory.API.Client;
 using Vintagestory.API.Common;
+using Vintagestory.API.Server;
+using Vintagestory.Client.NoObf;
 using Vintagestory.GameContent;
 using static HarmonyLib.Code;
 
@@ -13,25 +16,27 @@ namespace datedliquor.src.BlockClass
 {
     public class BlockDatedLiquorContainer : BlockCorkableLiquidContainer
     {
-        public DatedContainableProps CorkedProps = new DatedContainableProps();
-/*
- TODO 
+        public DatedLiqourProps DateProps = new DatedLiqourProps();
+        /*
+        Add an attribute to corked containers for the date that they were corked/sealed.
+        
+        Read that date and compare to the current date, display it in a format defined in the cfg file.
+        
+        when a bottle is uncorked/uncapped, the date remains displayed on the bottle.
+        
+        If more liquid is added to the bottle, or the bottle is emptied, then the bottle loses the date attribute.
+        
+        recorking a partially emptied bottle does not update the date on the container, and the older date is used until emptied or one of the above contitions occur.
+        
+        add the ability to cork/uncork a bottle while it's placed in the world
 
-Add an attribute to corked containers for the date that they were corked/sealed.
+        */
+        public override void OnLoaded(ICoreAPI api)
+        {
+            base.OnLoaded(api);
+            DateProps = Attributes["DatedLiqourProps"].AsObject(DateProps, Code.Domain);
+        }
 
-Read that date and compare to the current date, display it in a format defined in the cfg file.
-
-when a bottle is uncorked/uncapped, the date remains displayed on the bottle.
-
-If more liquid is added to the bottle, or the bottle is emptied, then the bottle loses the date attribute.
-
-recorking a partially emptied bottle does not update the date on the container, and the older date is used until emptied or one of the above contitions occur.
- 
-
-add the ability to cork/uncork a bottle while it's placed in the world
-*/
-
-       
         public override void AddExtraHeldItemInfoPostMaterial(ItemSlot inSlot, StringBuilder dsc, IWorldAccessor world)
         {
             base.AddExtraHeldItemInfoPostMaterial(inSlot, dsc, world); 
@@ -39,8 +44,6 @@ add the ability to cork/uncork a bottle while it's placed in the world
 
         public override void OnHeldInteractStop(float secondsUsed, ItemSlot slot, EntityAgent byEntity, BlockSelection blockSel, EntitySelection entitySel)
         {
-            api.Logger.Event("OnHeldInteractStop");
-
             // Store content state before base call
             ItemStack contentBefore = GetContent(slot.Itemstack);
             float litresBefore = GetCurrentLitres(slot.Itemstack);
@@ -56,13 +59,13 @@ add the ability to cork/uncork a bottle while it's placed in the world
             // If bottle was empty and now has content, stamp it
             if ((contentBefore == null || litresBefore <= 0f) && (contentAfter != null && litresAfter > 0f))
             {
-                CheckAndStampIfFilled(slot.Itemstack, player);
+          //      CheckAndStampIfFilled(slot.Itemstack, player);
                 slot.MarkDirty();
             }
             // If bottle is being emptied, clear bottling info
             else if ((contentBefore != null && litresBefore > 0f) && (contentAfter == null || litresAfter <= 0f))
             {
-                ClearBottlingInfo(slot.Itemstack);
+          //      ClearBottlingInfo(slot.Itemstack);
                 slot.MarkDirty();
             }
         }
@@ -89,10 +92,13 @@ add the ability to cork/uncork a bottle while it's placed in the world
             }
 
         }
+        
 
 
-
-
+        public override void TryMergeStacks(ItemStackMergeOperation op)
+        {
+            base.TryMergeStacks(op);
+        }
 
 
 
