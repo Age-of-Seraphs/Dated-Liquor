@@ -73,12 +73,12 @@ namespace datedliquor.src.BlockClass
         protected override void OnCorkContainer(ItemSlot containerSlot, EntityAgent byEntity)
         {
             base.OnCorkContainer(containerSlot, byEntity);
-            CheckAndStampIfFilled(containerSlot.Itemstack,byEntity as IPlayer);
+       //     CheckAndStampIfFilled(containerSlot.Itemstack,byEntity as IPlayer);
         }
         protected override void OnUncorkContainer(ItemSlot containerSlot, EntityAgent byEntity)
         {
             base.OnUncorkContainer(containerSlot, byEntity);
-            ClearBottlingInfo(containerSlot.Itemstack);
+       //     ClearBottlingInfo(containerSlot.Itemstack);
         }
 
 
@@ -87,7 +87,7 @@ namespace datedliquor.src.BlockClass
             base.tryEatStop(secondsUsed, slot, byEntity);
             if (slot.Itemstack == null)
             {
-                ClearBottlingInfo(slot.Itemstack);
+      //          ClearBottlingInfo(slot.Itemstack);
             }
 
         }
@@ -125,7 +125,7 @@ namespace datedliquor.src.BlockClass
             // Store bottler name if player is provided
             if (byPlayer != null)
             {
-                attrs.SetString("bottledBy", byPlayer.PlayerName);
+                attrs.SetString("bottledBy", byPlayer.PlayerUID);
             }
 
             // Store game world time (in total days) when bottled
