@@ -202,7 +202,7 @@ namespace datedliquor.src.BlockClass
         {
             IAsset asset = capi?.Assets.TryGet(emptyShapeLoc.CopyWithPathPrefixAndAppendixOnce("shapes/", ".json"));
 
-            if (corkStack != null ||Corked)
+            if (contentStack.Attributes != null && contentStack.Attributes.GetBool("corked"))
             {
                 asset = capi?.Assets.TryGet(CorkedShapeLoc.CopyWithPathPrefixAndAppendixOnce("shapes/", ".json"));
             }
@@ -340,13 +340,12 @@ namespace datedliquor.src.BlockClass
                     {
                         itemslot.TakeOut(1);
                         itemslot.MarkDirty();
-                        OnUncorkContainer(itemslot, byEntity);
                         if (!player.InventoryManager.TryGiveItemstack(itemstack, slotNotifyEffect: true))
                         {
                             byEntity.World.SpawnItemEntity(itemstack, byEntity.Pos.AsBlockPos);
                         }
                     }
-
+                    OnUncorkContainer(itemslot, byEntity);
                     ItemStack itemStack = corkStack ?? new ItemStack(byEntity.World.GetItem("aculinaryartillery:cork-generic"));
                     if (new DummySlot(itemStack).TryPutInto(byEntity.World, itemSlot) <= 0)
                     {
@@ -538,7 +537,7 @@ namespace datedliquor.src.BlockClass
             if (priority == EnumMergePriority.DirectMerge)
             {
                 Vintagestory.API.Datastructures.JsonObject itemAttributes = sourceStack.ItemAttributes;
-                if (itemAttributes != null && itemAttributes["canSealBottle"]?.AsBool() == true && !Corked)
+                if (itemAttributes != null && itemAttributes["canSealBottle"]?.AsBool() == true && !sinkStack.Attributes.GetBool("corked"))
                 {
                     return 1;
                 }
@@ -556,6 +555,7 @@ namespace datedliquor.src.BlockClass
         protected virtual void OnUncorkContainer(ItemSlot containerSlot, EntityAgent byEntity)
         {
             api.Logger.Event("container in slot {0} has been uncorked", containerSlot);
+            api.World.PlaySoundAt(new AssetLocation("datedliquor:sounds/bottle/corkpop*"), byEntity.Pos.X, byEntity.Pos.Y, byEntity.Pos.Z);
         }
 
         #endregion interaction
