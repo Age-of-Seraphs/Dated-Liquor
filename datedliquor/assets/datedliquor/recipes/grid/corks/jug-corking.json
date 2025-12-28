@@ -8,7 +8,7 @@
 			},
 			"G": {
 				"type": "block",
-				"code": "game:jug-clay-*-fired",
+				"code": "game:jug-*-fired",
 				"name": "color"
 			}
 		},
@@ -17,7 +17,7 @@
 		"name": "corkedclayjug",
 		"output": {
 			"type": "block",
-			"code": "game:jug-clay-{color}-fired"
+			"code": "game:jug-{color}-fired"
 		}
 	},
 	{
@@ -29,16 +29,16 @@
 			},
 			"G": {
 				"type": "block",
-				"code": "game:jug-glass-*-fired",
+				"code": "game:jugglass-*",
 				"name": "color"
 			}
 		},
 		"width": 1,
 		"height": 2,
-		"name": "corkedglassjug",
+		"name": "corkedjugglass",
 		"output": {
 			"type": "block",
-			"code": "game:jug-glass-{color}-fired"
+			"code": "jugglass-{color}"
 		}
 	}
 ]
