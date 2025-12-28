@@ -2,7 +2,13 @@
   {
     "op": "replace",
     "path": "/class",
-    "value": "BlockBottle",
-    "file": "game:blocktypes/clay/fired/jug.json"
+    "value": "datedliquor.BlockDatedLiquorContainer",
+    "file": "aculinaryartillery:blocktypes/bottles/claybottle-fired.json"
+  },
+  {
+    "op": "replace",
+    "path": "/class",
+    "value": "datedliquor.BlockDatedLiquorContainer",
+    "file": "aculinaryartillery:blocktypes/bottles/glassbottle.json"
   }
 ]

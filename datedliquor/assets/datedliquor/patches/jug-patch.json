@@ -2,7 +2,7 @@
   {
     "op": "replace",
     "path": "/class",
-    "value": "BlockBottle",
+    "value": "datedliquor.BlockDatedLiquorContainer",
     "file": "game:blocktypes/clay/fired/jug.json"
   }
 ]
